@@ -31,8 +31,8 @@ void main() {
 }` as const;
 
 const defaultParameters = {
-  patternScale: 2.7,
-  refraction: .03,
+  patternScale: 2,
+  refraction: .015,
   edgeBlur: .5,
   patternBlur: .005,
   liquid: .0,

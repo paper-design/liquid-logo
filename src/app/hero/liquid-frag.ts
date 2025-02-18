@@ -66,7 +66,7 @@ vec2 get_img_uv() {
 vec2 rotate(vec2 uv, float th) {
     return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
 }
-float get_color_channel(float c1, float c2, float stripe_p, vec3 w, float extra_blur) {
+float get_color_channel(float c1, float c2, float stripe_p, vec3 w, float extra_blur, float b) {
     float ch = c2;
     float border = 0.;
     float blur = u_patternBlur + extra_blur;
@@ -74,6 +74,13 @@ float get_color_channel(float c1, float c2, float stripe_p, vec3 w, float extra_
     ch = mix(ch, c1, smoothstep(.0, blur, stripe_p));
 
     border = w[0];
+    ch = mix(ch, c2, smoothstep(border - blur, border + blur, stripe_p));
+
+    b = smoothstep(.2, .8, b);
+    border = w[0] + .4 * (1. - b) * w[1];
+    ch = mix(ch, c1, smoothstep(border - blur, border + blur, stripe_p));
+
+    border = w[0] + .5 * (1. - b) * w[1];
     ch = mix(ch, c2, smoothstep(border - blur, border + blur, stripe_p));
 
     border = w[0] + w[1];
@@ -160,7 +167,7 @@ void main() {
 
     dir *= smoothstep(1., .7, edge);
 
-    dir += .18 * (smoothstep(.0, .1, uv.y) * smoothstep(.4, .2, uv.y));
+    dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
     dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
 
     dir *= (.5 + .5 * pow(uv.y, 2.));
@@ -170,21 +177,26 @@ void main() {
     dir -= t;
 
     float refr_r = refr;
-    refr_r += .01 * bulge * noise;
+    refr_r += .03 * bulge * noise;
     float refr_b = 1.3 * refr;
+
+    refr_r += 5. * (smoothstep(-.1, .2, uv.y) * smoothstep(.5, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(1., .4, bulge));
+    refr_r -= diagonal;
+
+    refr_b += (smoothstep(0., .4, uv.y) * smoothstep(.8, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(.8, .4, bulge));
+    refr_b -= .2 * edge;
 
     refr_r *= u_refraction;
     refr_b *= u_refraction;
 
-
     vec3 w = vec3(thin_strip_1_width, thin_strip_2_width, wide_strip_ratio);
     w[1] -= .02 * smoothstep(.0, 1., edge + bulge);
     float stripe_r = mod(dir + refr_r, 1.);
-    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.01 + .03 * u_refraction * bulge);
+    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02 + .03 * u_refraction * bulge, bulge);
     float stripe_g = mod(dir, 1.);
-    float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01);
+    float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01 / (1. - diagonal), bulge);
     float stripe_b = mod(dir - refr_b, 1.);
-    float b = get_color_channel(color1.b, color2.b, stripe_b, w, 0.);
+    float b = get_color_channel(color1.b, color2.b, stripe_b, w, .01, bulge);
 
     color = vec3(r, g, b);
 
