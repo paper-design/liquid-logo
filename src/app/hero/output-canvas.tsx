@@ -31,14 +31,12 @@ void main() {
 }` as const;
 
 const defaultParameters = {
-  cycleWidth: 1.6,
-  refraction: 0.03,
-  edgesWidth: 0.3,
-  edgesPower: 0.2,
-  edgeBlur: 0.04,
-  stripesBlur: 0.02,
-  noisePower: 0.1,
-  speed: 0.3,
+  patternScale: 2.7,
+  refraction: .03,
+  edgeBlur: .5,
+  patternBlur: .005,
+  liquid: .0,
+  speed: .3,
 } as const;
 
 export function OutputCanvas({ imageData }: { imageData: ImageData }) {
@@ -51,13 +49,11 @@ export function OutputCanvas({ imageData }: { imageData: ImageData }) {
     console.log('updating uniforms');
     if (!gl || !uniforms) return;
     gl.uniform1f(uniforms.u_edgeBlur, params.edgeBlur);
-    gl.uniform1f(uniforms.u_stripesBlur, params.stripesBlur);
+    gl.uniform1f(uniforms.u_patternBlur, params.patternBlur);
     gl.uniform1f(uniforms.u_speed, params.speed);
-    gl.uniform1f(uniforms.u_cycleWidth, params.cycleWidth);
+    gl.uniform1f(uniforms.u_patternScale, params.patternScale);
     gl.uniform1f(uniforms.u_refraction, params.refraction);
-    gl.uniform1f(uniforms.u_edgesPower, params.edgesPower);
-    gl.uniform1f(uniforms.u_edgesWidth, params.edgesWidth);
-    gl.uniform1f(uniforms.u_noisePower, params.noisePower);
+    gl.uniform1f(uniforms.u_liquid, params.liquid);
   }
 
   useEffect(() => {

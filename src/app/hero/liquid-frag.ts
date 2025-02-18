@@ -8,14 +8,11 @@ uniform sampler2D u_image_texture;
 uniform float u_time;
 uniform float u_ratio;
 uniform float u_img_ratio;
-uniform float u_cycleWidth;
-
+uniform float u_patternScale;
 uniform float u_refraction;
-uniform float u_edgesPower;
-uniform float u_edgesWidth;
 uniform float u_edgeBlur;
-uniform float u_stripesBlur;
-uniform float u_noisePower;
+uniform float u_patternBlur;
+uniform float u_liquid;
 uniform float u_speed;
 
 
@@ -72,7 +69,7 @@ vec2 rotate(vec2 uv, float th) {
 float get_color_channel(float c1, float c2, float stripe_p, vec3 w, float extra_blur) {
     float ch = c2;
     float border = 0.;
-    float blur = u_stripesBlur + extra_blur;
+    float blur = u_patternBlur + extra_blur;
 
     ch = mix(ch, c1, smoothstep(.0, blur, stripe_p));
 
@@ -89,13 +86,21 @@ float get_color_channel(float c1, float c2, float stripe_p, vec3 w, float extra_
     return ch;
 }
 
+float get_img_frame_alpha(vec2 uv, float img_frame_width) {
+    float img_frame_alpha = smoothstep(0., img_frame_width, uv.x) * smoothstep(1., 1. - img_frame_width, uv.x);
+    img_frame_alpha *= smoothstep(0., img_frame_width, uv.y) * smoothstep(1., 1. - img_frame_width, uv.y);
+    return img_frame_alpha;
+}
+
 void main() {
     vec2 uv = vUv;
     uv.y = 1. - uv.y;
     uv.x *= u_ratio;
 
+    float diagonal = uv.x - uv.y;
+
     float t = .001 * u_speed * u_time;
-//    float t = u_speed;
+    // float t = u_speed;
 
 
     vec2 img_uv = get_img_uv();
@@ -107,57 +112,78 @@ void main() {
     vec3 color1 = vec3(.98, 0.98, 1.);
     vec3 color2 = vec3(.1, .1, .1 + .1 * smoothstep(.7, 1.3, uv.x + uv.y));
 
+    float edge = img.r;
 
-    float cycle_width = u_cycleWidth;
-    float thin_strip_1_ratio = .1 / cycle_width;
-    float thin_strip_2_ratio = .06 / cycle_width;
+
+    vec2 grad_uv = uv;
+    grad_uv -= .5;
+
+    float dist = length(grad_uv + vec2(0., .2 * diagonal));
+
+    grad_uv = rotate(grad_uv, (.25 - .2 * diagonal) * PI);
+
+    float bulge = pow(1.8 * dist, 1.2);
+    bulge = 1. - bulge;
+    bulge *= pow(uv.y, .3);
+
+
+    float cycle_width = u_patternScale;
+    float thin_strip_1_ratio = .12 / cycle_width * (1. - .4 * bulge);
+    float thin_strip_2_ratio = .07 / cycle_width * (1. + .4 * bulge);
     float wide_strip_ratio = (1. - thin_strip_1_ratio - thin_strip_2_ratio);
 
     float thin_strip_1_width = cycle_width * thin_strip_1_ratio;
     float thin_strip_2_width = cycle_width * thin_strip_2_ratio;
 
-    vec2 grad_uv = uv;
-    grad_uv -= .5;
-    grad_uv = rotate(grad_uv, .25 * PI);
 
-    float mask = img.r;
+    opacity = smoothstep(1., 1. - 1e-4 - u_edgeBlur, edge);
+    opacity *= get_img_frame_alpha(img_uv, 1e-2);
 
-    opacity = smoothstep(1., 1. - 1e-4 - u_edgeBlur, img.r);
-
-
-    float edge = mask;
 
     float noise = snoise(uv - t);
-    noise *= u_noisePower;
-    edge += noise * smoothstep(1., .6, edge);
 
+    edge += (1. - edge) * u_liquid * noise;
+
+    float refr = 0.;
+    refr += (1. - bulge);
+    refr = clamp(refr, 0., 1.);
 
     float dir = grad_uv.x;
-    float diagonal = uv.x - uv.y;
 
-    float distort = 1. - edge;
-    distort = mix(distort, distort - u_edgesPower, smoothstep(1. - u_edgesWidth, 1., edge));
 
-    dir += diagonal * distort;
+    dir += diagonal;
+
+    dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
+
+    bulge *= clamp(pow(uv.y, .1), .3, 1.);
+    dir *= (.1 + (1.1 - edge) * bulge);
+
+    dir *= smoothstep(1., .7, edge);
+
+    dir += .18 * (smoothstep(.0, .1, uv.y) * smoothstep(.4, .2, uv.y));
+    dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
+
+    dir *= (.5 + .5 * pow(uv.y, 2.));
+
     dir *= cycle_width;
 
-    float dir_r = dir - t;
-    float dir_g = dir - t;
-    float dir_b = dir - t;
+    dir -= t;
 
-    float refr = pow(mask, .7);
-    refr = clamp(refr, 0., 1.);
-    refr *= u_refraction;
+    float refr_r = refr;
+    refr_r += .01 * bulge * noise;
+    float refr_b = 1.3 * refr;
 
-    float refr_r = 1.2 * refr + .03 * refr * smoothstep(.2, .6, edge) + .01 * noise;
-    float refr_b = refr;// + (.01 + .01 * u_noisePower) * noise * smoothstep(.6, .9, edge);
+    refr_r *= u_refraction;
+    refr_b *= u_refraction;
 
-    vec3 w = vec3(thin_strip_1_width, thin_strip_2_width + .1 * smoothstep(.0, 1., edge), wide_strip_ratio);
-    float stripe_r = mod(dir_r + refr_r, 1.);
-    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02);
-    float stripe_g = mod(dir_g, 1.);
+
+    vec3 w = vec3(thin_strip_1_width, thin_strip_2_width, wide_strip_ratio);
+    w[1] -= .02 * smoothstep(.0, 1., edge + bulge);
+    float stripe_r = mod(dir + refr_r, 1.);
+    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.01 + .03 * u_refraction * bulge);
+    float stripe_g = mod(dir, 1.);
     float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01);
-    float stripe_b = mod(dir_b - refr_b, 1.);
+    float stripe_b = mod(dir - refr_b, 1.);
     float b = get_color_channel(color1.b, color2.b, stripe_b, w, 0.);
 
     color = vec3(r, g, b);
@@ -165,4 +191,5 @@ void main() {
     color *= opacity;
 
     fragColor = vec4(color, opacity);
-}`;
+}
+`;
