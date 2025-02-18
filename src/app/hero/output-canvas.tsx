@@ -9,14 +9,11 @@ import { toast } from 'sonner';
 // uniform float u_time;
 // uniform float u_ratio;
 // uniform float u_img_ratio;
-// uniform float u_cycleWidth;
-
+// uniform float u_patternScale;
 // uniform float u_refraction;
-// uniform float u_edgesPower;
-// uniform float u_edgesWidth;
 // uniform float u_edgeBlur;
-// uniform float u_stripesBlur;
-// uniform float u_noisePower;
+// uniform float u_patternBlur;
+// uniform float u_liquid;
 // uniform float u_speed;
 
 const vertexShaderSource = `#version 300 es
