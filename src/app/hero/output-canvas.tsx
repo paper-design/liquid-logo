@@ -165,28 +165,13 @@ export function OutputCanvas({ imageData }: { imageData: ImageData }) {
     function resizeCanvas() {
       if (!canvasEl || !gl || !uniforms) return;
       const imgRatio = imageData.width / imageData.height;
+      gl.uniform1f(uniforms.u_img_ratio, imgRatio);
 
-      // Set max dimension to 500px
-      const maxSize = 500;
-      let width, height;
-      if (imgRatio > 1) {
-        width = Math.min(maxSize, imageData.width);
-        height = width / imgRatio;
-      } else {
-        height = Math.min(maxSize, imageData.height);
-        width = height * imgRatio;
-      }
-
-      canvasEl.width = width * devicePixelRatio;
-      canvasEl.height = height * devicePixelRatio;
-
-      // Set canvas style dimensions for actual display size
-      canvasEl.style.width = `${width}px`;
-      canvasEl.style.height = `${height}px`;
-
-      gl.viewport(0, 0, canvasEl.width, canvasEl.height);
-      const canvasRatio = canvasEl.width / canvasEl.height;
-      gl.uniform1f(uniforms.u_ratio, canvasRatio);
+      const side = 1000;
+      canvasEl.width = side * devicePixelRatio;
+      canvasEl.height = side * devicePixelRatio;
+      gl.viewport(0, 0, canvasEl.height, canvasEl.height);
+      gl.uniform1f(uniforms.u_ratio, 1);
       gl.uniform1f(uniforms.u_img_ratio, imgRatio);
     }
 
@@ -248,8 +233,8 @@ export function OutputCanvas({ imageData }: { imageData: ImageData }) {
   }, [gl, uniforms, imageData]);
 
   return (
-    <div className="flex items-center justify-center rounded-lg bg-gradient-to-t from-[#d1d1d1] to-[#f1f1f1] p-8">
-      <canvas ref={canvasRef} />
+    <div className="flex items-center justify-center rounded-lg bg-gradient-to-t from-[#d1d1d1] to-[#f1f1f1]">
+      <canvas ref={canvasRef} className="block max-w-full" />
     </div>
   );
 }
