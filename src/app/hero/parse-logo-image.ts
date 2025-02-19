@@ -69,17 +69,20 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
           var g = data[idx4 + 1];
           var b = data[idx4 + 2];
           var a = data[idx4 + 3];
-          if (a === 0) {
-            shapeMask[y * width + x] = false;
-          } else {
-            shapeMask[y * width + x] = true;
+
+          // keep original value
+          shapeMask[y * width + x] = a;
+
+          // or #ffffff transparent
+          if (r === 255 && g === 255 && b === 255) {
+            shapeMask[y * width + x] = 0;
           }
         }
       }
 
       function inside(x: number, y: number) {
         if (x < 0 || x >= width || y < 0 || y >= height) return false;
-        return shapeMask[y * width + x];
+        return shapeMask[y * width + x] > 0;
       }
 
       // 2) Identify boundary (pixels that have at least one non-shape neighbor)
@@ -87,7 +90,7 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
       for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
           var idx = y * width + x;
-          if (!shapeMask[idx]) continue;
+          if (shapeMask[idx] > 0) continue;
           var isBoundary = false;
           for (var ny = y - 1; ny <= y + 1 && !isBoundary; ny++) {
             for (var nx = x - 1; nx <= x + 1 && !isBoundary; nx++) {
@@ -110,7 +113,7 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
 
       function getU(x: number, y: number, arr: Float32Array) {
         if (x < 0 || x >= width || y < 0 || y >= height) return 0;
-        if (!shapeMask[y * width + x]) return 0;
+        if (shapeMask[y * width + x] === 0) return 0;
         return arr[y * width + x];
       }
 
@@ -118,7 +121,7 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
         for (var y = 0; y < height; y++) {
           for (var x = 0; x < width; x++) {
             var idx = y * width + x;
-            if (!shapeMask[idx] || boundaryMask[idx]) {
+            if (shapeMask[idx] === 0 || boundaryMask[idx]) {
               newU[idx] = 0;
               continue;
             }
@@ -144,11 +147,8 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
         for (var x = 0; x < width; x++) {
           var idx = y * width + x;
           var px = idx * 4;
-          if (!shapeMask[idx]) {
-            outImg.data[px] = 255;
-            outImg.data[px + 1] = 255;
-            outImg.data[px + 2] = 255;
-            outImg.data[px + 3] = 0;
+          if (shapeMask[idx] === 0) {
+
           } else {
             const raw = u[idx] / maxVal;
             const remapped = Math.pow(raw, alpha);
@@ -156,8 +156,8 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
             outImg.data[px] = gray;
             outImg.data[px + 1] = gray;
             outImg.data[px + 2] = gray;
-            outImg.data[px + 3] = 255;
           }
+          outImg.data[px + 3] = shapeMask[idx];
         }
       }
       ctx.putImageData(outImg, 0, 0);
