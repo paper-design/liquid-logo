@@ -157,41 +157,45 @@ void main() {
 
     dir += diagonal;
 
-    dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
-
-    bulge *= clamp(pow(uv.y, .1), .3, 1.);
-    dir *= (.1 + (1.1 - edge) * bulge);
+    // dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
+    //
+    // bulge *= clamp(pow(uv.y, .1), .3, 1.);
+    // dir *= (.1 + (1.1 - edge) * bulge);
 
     dir *= smoothstep(1., .7, edge);
 
-    dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
-    dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
-
-    dir *= (.5 + .5 * pow(uv.y, 2.));
+    // dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
+    // dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
+    //
+    // dir *= (.5 + .5 * pow(uv.y, 2.));
 
     dir *= cycle_width;
+    dir = mod(dir, 1.);
 
     dir -= t;
+    dir = mod(dir, 1.);
 
     float refr_r = refr;
-    refr_r += .03 * bulge * noise;
+    // refr_r += .03 * bulge * noise;
     float refr_b = 1.3 * refr;
 
-    refr_r += 5. * (smoothstep(-.1, .2, uv.y) * smoothstep(.5, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(1., .4, bulge));
-    refr_r -= diagonal;
-
-    refr_b += (smoothstep(0., .4, uv.y) * smoothstep(.8, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(.8, .4, bulge));
-    refr_b -= .2 * edge;
-
-    refr_r *= u_refraction;
-    refr_b *= u_refraction;
+    // refr_r += 5. * (smoothstep(-.1, .2, uv.y) * smoothstep(.5, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(1., .4, bulge));
+    // refr_r -= diagonal;
+    //
+    // refr_b += (smoothstep(0., .4, uv.y) * smoothstep(.8, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(.8, .4, bulge));
+    // refr_b -= .2 * edge;
+    //
+    // refr_r *= u_refraction;
+    // refr_b *= u_refraction;
 
     vec3 w = vec3(thin_strip_1_width, thin_strip_2_width, wide_strip_ratio);
-    w[1] -= .02 * smoothstep(.0, 1., edge + bulge);
+    // w[1] -= .02 * smoothstep(.0, 1., edge + bulge);
     float stripe_r = mod(dir + refr_r, 1.);
-    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02 + .03 * u_refraction * bulge, bulge);
+    // float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02 + .03 * u_refraction * bulge, bulge);
+    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02, bulge);
     float stripe_g = mod(dir, 1.);
-    float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01 / (1. - diagonal), bulge);
+    // float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01 / (1. - diagonal), bulge);
+    float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01, bulge);
     float stripe_b = mod(dir - refr_b, 1.);
     float b = get_color_channel(color1.b, color2.b, stripe_b, w, .01, bulge);
 
