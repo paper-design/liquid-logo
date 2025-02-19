@@ -1,6 +1,6 @@
 'use client';
 
-import { liquidFragSource } from '@/_app/hero/liquid-frag';
+import { liquidFragSource } from '@/app/hero/liquid-frag';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
