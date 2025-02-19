@@ -169,10 +169,8 @@ void main() {
     dir *= (.5 + .5 * pow(uv.y, 2.));
 
     dir *= cycle_width;
-    dir = mod(dir, 1.);
 
     dir -= t;
-    dir = mod(dir, 1.);
 
     float refr_r = refr;
     refr_r += .03 * bulge * noise;
