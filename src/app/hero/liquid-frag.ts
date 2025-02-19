@@ -1,5 +1,5 @@
 export const liquidFragSource = /* glsl */ `#version 300 es
-precision mediump float;
+precision highp float;
 
 in vec2 vUv;
 out vec4 fragColor;
@@ -140,10 +140,10 @@ void main() {
     float thin_strip_2_width = cycle_width * thin_strip_2_ratio;
 
     opacity = 1. - smoothstep(.9 - .5 * u_edgeBlur, 1. - .5 * u_edgeBlur, edge);
-    opacity *= get_img_frame_alpha(img_uv, 0.);
+    opacity *= get_img_frame_alpha(img_uv, 1e-4);
 
 
-    float noise = snoise(uv - t);
+    float noise = snoise(vUv - t + vec2(.0001));
 
     edge += (1. - edge) * u_liquid * noise;
 
