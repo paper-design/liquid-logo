@@ -144,7 +144,8 @@ void main() {
     opacity *= get_img_frame_alpha(img_uv, 1e-2);
 
 
-    float noise = snoise(vUv - t);
+    float noise = 0.;
+    // float noise = snoise(vUv - t);
 
     edge += (1. - edge) * u_liquid * noise;
 
@@ -201,6 +202,7 @@ void main() {
 
     color *= opacity;
 
-    fragColor = vec4(color, opacity);
+    fragColor = vec4(vec3(noise), 1.);
+    // fragColor = vec4(color, opacity);
 }
 `;
