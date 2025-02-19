@@ -201,7 +201,6 @@ void main() {
 
     color *= opacity;
 
-    fragColor = vec4(vec3(noise), 1.);
-    // fragColor = vec4(color, opacity);
+    fragColor = vec4(color, opacity);
 }
 `;
