@@ -140,7 +140,7 @@ void main() {
     float thin_strip_2_width = cycle_width * thin_strip_2_ratio;
 
     opacity = 1. - smoothstep(.9 - .5 * u_edgeBlur, 1. - .5 * u_edgeBlur, edge);
-    opacity *= get_img_frame_alpha(img_uv, 1e-2);
+    opacity *= get_img_frame_alpha(img_uv, 0.);
 
 
     float noise = snoise(uv - t);
