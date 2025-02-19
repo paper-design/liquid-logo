@@ -69,7 +69,7 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
           var g = data[idx4 + 1];
           var b = data[idx4 + 2];
           var a = data[idx4 + 3];
-          if ((r === 255 && g === 255 && b === 255 && a === 255) || a === 0) {
+          if (a === 0) {
             shapeMask[y * width + x] = false;
           } else {
             shapeMask[y * width + x] = true;
@@ -148,7 +148,7 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
             outImg.data[px] = 255;
             outImg.data[px + 1] = 255;
             outImg.data[px + 2] = 255;
-            outImg.data[px + 3] = 255;
+            outImg.data[px + 3] = 0;
           } else {
             const raw = u[idx] / maxVal;
             const remapped = Math.pow(raw, alpha);
