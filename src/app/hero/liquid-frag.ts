@@ -157,23 +157,21 @@ void main() {
 
     dir += diagonal;
 
-    // dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
-    //
-    // bulge *= clamp(pow(uv.y, .1), .3, 1.);
-    // dir *= (.1 + (1.1 - edge) * bulge);
+    dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
+
+    bulge *= clamp(pow(uv.y, .1), .3, 1.);
+    dir *= (.1 + (1.1 - edge) * bulge);
 
     dir *= smoothstep(1., .7, edge);
 
-    // dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
-    // dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
-    //
-    // dir *= (.5 + .5 * pow(uv.y, 2.));
+    dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
+    dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
+
+    dir *= (.5 + .5 * pow(uv.y, 2.));
 
     dir *= cycle_width;
-    dir = mod(dir, 1.);
 
     dir -= t;
-    dir = mod(dir, 1.);
 
     float refr_r = refr;
     refr_r += .03 * bulge * noise;
