@@ -3,6 +3,7 @@ import { Hero } from '@/hero/hero';
 import { Slider } from '@base-ui-components/react';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { Suspense } from 'react';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -26,7 +27,9 @@ export default async function Page({ params }: PageProps) {
       </div>
 
       <div className="pb-80">
-        <Hero imageId={id} />
+        <Suspense>
+          <Hero imageId={id} />
+        </Suspense>
       </div>
 
       <div className="mb-16 flex w-full overflow-scroll p-16 text-sm select-none *:first:ml-auto *:last:mr-auto">
