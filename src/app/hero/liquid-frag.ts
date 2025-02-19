@@ -140,8 +140,8 @@ void main() {
     float thin_strip_2_width = cycle_width * thin_strip_2_ratio;
 
 
-    opacity = smoothstep(1., 1. - 1e-4 - u_edgeBlur, edge);
-    opacity *= get_img_frame_alpha(img_uv, 1e-2);
+    // opacity = smoothstep(1., 1. - 1e-4 - u_edgeBlur, edge);
+    // opacity *= get_img_frame_alpha(img_uv, 1e-2);
 
 
     float noise = snoise(uv - t);
@@ -157,12 +157,12 @@ void main() {
 
     dir += diagonal;
 
-    dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
+    // dir -= 2. * noise * diagonal * (smoothstep(0., 1., edge) * smoothstep(1., 0., edge));
 
     // bulge *= clamp(pow(uv.y, .1), .3, 1.);
     // dir *= (.1 + (1.1 - edge) * bulge);
 
-    dir *= smoothstep(1., .7, edge);
+    // dir *= smoothstep(1., .7, edge);
 
     // dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
     // dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));
