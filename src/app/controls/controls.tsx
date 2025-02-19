@@ -32,11 +32,11 @@ export function Controls({ params, setParams }: { params: ShaderParams; setParam
       />
       <Control
         label="Edge Blur"
-        value={params.edgeBlur}
+        value={params.edge}
         min={0}
         max={1}
         step={0.01}
-        onChange={(value) => setParam('edgeBlur', value)}
+        onChange={(value) => setParam('edge', value)}
       />
       <Control
         label="Pattern Blur"

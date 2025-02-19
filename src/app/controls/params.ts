@@ -7,7 +7,7 @@ const params = {
     max: 1,
     step: 0.001,
   },
-  edgeBlur: {
+  edge: {
     value: 0.4,
     min: 0,
     max: 1,

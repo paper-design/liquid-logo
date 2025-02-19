@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 // uniform float u_img_ratio;
 // uniform float u_patternScale;
 // uniform float u_refraction;
-// uniform float u_edgeBlur;
+// uniform float u_edge;
 // uniform float u_patternBlur;
 // uniform float u_liquid;
 
@@ -28,7 +28,7 @@ void main() {
 export type ShaderParams = {
   patternScale: number;
   refraction: number;
-  edgeBlur: number;
+  edge: number;
   patternBlur: number;
   liquid: number;
   speed: number;
@@ -52,7 +52,7 @@ export function OutputCanvas({
 
   function updateUniforms() {
     if (!gl || !uniforms) return;
-    gl.uniform1f(uniforms.u_edgeBlur, params.edgeBlur);
+    gl.uniform1f(uniforms.u_edge, params.edge);
     gl.uniform1f(uniforms.u_patternBlur, params.patternBlur);
     gl.uniform1f(uniforms.u_time, 0);
     gl.uniform1f(uniforms.u_patternScale, params.patternScale);
