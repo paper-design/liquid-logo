@@ -141,7 +141,7 @@ void main() {
 
 
     opacity = img.a;
-    opacity *= get_img_frame_alpha(img_uv, 1e-2);
+    opacity *= get_img_frame_alpha(img_uv, 0.);
 
 
     float noise = snoise(uv - t);
