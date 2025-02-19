@@ -69,7 +69,7 @@ const logos = [
   },
   {
     name: 'Chanel',
-    href: '/share/01JMFN9WSEDN17XS6BC4KHCB8V?edgeBlur=0.15',
+    href: '/share/01JMFNF83EX5DAVWF1TP1469BW?edgeBlur=0.15',
     src: '/logos/chanel.svg',
   },
 ];

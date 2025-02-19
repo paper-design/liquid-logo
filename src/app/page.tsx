@@ -1,6 +1,6 @@
 import Page from '@/app/share/[id]/page';
 
-const APPLE_LOGO_ID = '01JMFN6GGTSR9TJ1P4MTDJNFNW';
+const APPLE_LOGO_ID = '01JMFNDQBAHFZ0JS7AHRA5VYMT';
 
 export default function Home() {
   return (
