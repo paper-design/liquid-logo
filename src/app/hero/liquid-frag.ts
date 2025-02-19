@@ -1,5 +1,5 @@
 export const liquidFragSource = /* glsl */ `#version 300 es
-precision mediump float;
+precision highp float;
 
 in vec2 vUv;
 out vec4 fragColor;
@@ -144,7 +144,7 @@ void main() {
     opacity *= get_img_frame_alpha(img_uv, 1e-2);
 
 
-    float noise = snoise(vUv - t);
+    float noise = snoise(vUv - t + vec2(.0001));
 
     edge += (1. - edge) * u_liquid * noise;
 
