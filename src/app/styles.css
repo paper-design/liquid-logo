@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+@import './utilities.css';
+
+@font-face {
+  font-family: Matter;
+  src: url('https://paper.design/matter.woff2');
+}
+
+@theme {
+  --*: initial;
+
+  --breakpoint-md: 1200px;
+  --breakpoint-lg: 1400px;
+
+  --spacing: 1px;
+  --default-font-family: Matter, sans-serif;
+
+  --color-black: #000;
+  --color-white: #fff;
+  --color-transparent: #0000;
+  --color-currentcolor: currentcolor;
+  --color-blue: oklch(74% 0.104 258);
+  --color-button: oklch(61.32% 0.148 258);
+  --color-focus: oklch(74% 26% 258);
+  --color-selection: oklch(78% 35% 258 / 50%);
+
+  --text-sm: 16px;
+  --text-sm--line-height: 24px;
+  --text-sm--letter-spacing: 0.01em;
+
+  --text-base: 18px;
+  --text-base--line-height: 28px;
+  --text-base--letter-spacing: 0.01em;
+
+  --font-weight-extralight: 150;
+  --font-weight-light: 250;
+  --font-weight-semilight: 320;
+  --font-weight-normal: 400;
+  --font-weight-caption: 430;
+  --font-weight-medium: 480;
+  --font-weight-semibold: 550;
+  --font-weight-bold: 670;
+}
+
+@layer base {
+  :root {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+
+    background-color: #000;
+    color: white;
+
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    letter-spacing: var(--text-base--letter-spacing);
+  }
+
+  ::selection {
+    background-color: var(--color-selection);
+  }
+
+  a {
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+}
+
+body {
+  min-width: 600px;
+}

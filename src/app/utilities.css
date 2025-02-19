@@ -1,0 +1,37 @@
+@utility rounded-* {
+  border-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-* {
+  border-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-t-* {
+  border-top-left-radius: calc(--value(integer) * 1px);
+  border-top-right-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-b-* {
+  border-bottom-left-radius: calc(--value(integer) * 1px);
+  border-bottom-right-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-tl-* {
+  border-top-left-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-tr-* {
+  border-top-right-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-bl-* {
+  border-bottom-left-radius: calc(--value(integer) * 1px);
+}
+
+@utility rounded-br-* {
+  border-bottom-right-radius: calc(--value(integer) * 1px);
+}
+
+@utility tracking-* {
+  letter-spacing: calc(--value(integer) * 0.0001em);
+}

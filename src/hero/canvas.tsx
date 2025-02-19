@@ -1,6 +1,6 @@
 'use client';
 
-import { liquidFragSource } from './liquid-frag';
+import { liquidFragSource } from '@/_app/hero/liquid-frag';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -34,7 +34,7 @@ export type ShaderParams = {
   speed: number;
 };
 
-export function OutputCanvas({
+export function Canvas({
   imageData,
   params,
   processing,
@@ -251,15 +251,5 @@ export function OutputCanvas({
     };
   }, [gl, uniforms, imageData]);
 
-  return (
-    <div className="relative flex items-center justify-center rounded-lg bg-gradient-to-t from-[#d1d1d1] to-[#f1f1f1] p-16">
-      <canvas ref={canvasRef} className="block max-w-full" />
-
-      {processing && (
-        <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-lg bg-black/80 p-4">
-          <div className="text-white">loading...</div>
-        </div>
-      )}
-    </div>
-  );
+  return <canvas ref={canvasRef} className="block h-full w-full object-contain" />;
 }
