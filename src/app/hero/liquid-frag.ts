@@ -172,6 +172,7 @@ void main() {
     dir *= cycle_width;
 
     dir -= t;
+    dir = mod(dir, 1.);
 
     float refr_r = refr;
     refr_r += .03 * bulge * noise;
