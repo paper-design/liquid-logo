@@ -54,22 +54,22 @@ const logos = [
   },
   {
     name: 'Nike',
-    href: '/',
+    href: '/share/01JMFN4FHEYQY3CBR7B4YBZFK9',
     src: '/logos/nike.svg',
   },
-  {
-    name: 'Vercel',
-    href: '/',
-    src: '/logos/vercel.svg',
-  },
+  // {
+  //   name: 'Vercel',
+  //   href: '/',
+  //   src: '/logos/vercel.svg',
+  // },
   {
     name: 'NASA',
-    href: '/',
+    href: '/share/01JMFN7R2E6WV297MM6EHBCAW6?edgeBlur=0.15',
     src: '/logos/nasa.svg',
   },
   {
     name: 'Chanel',
-    href: '/',
+    href: '/share/01JMFN9WSEDN17XS6BC4KHCB8V?edgeBlur=0.15',
     src: '/logos/chanel.svg',
   },
 ];
