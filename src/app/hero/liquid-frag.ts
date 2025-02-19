@@ -146,7 +146,7 @@ void main() {
 
     float noise = snoise(uv - t);
 
-    edge += (1. - edge) * u_liquid * noise;
+    // edge += (1. - edge) * u_liquid * noise;
 
     float refr = 0.;
     refr += (1. - bulge);
@@ -162,7 +162,7 @@ void main() {
     // bulge *= clamp(pow(uv.y, .1), .3, 1.);
     // dir *= (.1 + (1.1 - edge) * bulge);
 
-    // dir *= smoothstep(1., .7, edge);
+    dir *= smoothstep(1., .7, edge);
 
     // dir += .18 * (smoothstep(.1, .2, uv.y) * smoothstep(.4, .2, uv.y));
     // dir += .03 * (smoothstep(.1, .2, 1. - uv.y) * smoothstep(.4, .2, 1. - uv.y));

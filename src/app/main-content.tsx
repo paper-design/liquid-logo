@@ -11,7 +11,7 @@ export function MainContent({ initialImageId }: MainContentProps) {
     <div className="flex items-center justify-center">
       <div className="flex w-full max-w-2xl flex-col items-center justify-center gap-4">
         <h1 className="text-4xl font-bold">Liquid Logo</h1>
-        <p>4 Happy Apple event day</p>
+        <p>5 Happy Apple event day</p>
 
         <Suspense fallback={<div>Loading...</div>}>
           <Hero initialImageId={initialImageId} />
