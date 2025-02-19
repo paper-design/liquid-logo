@@ -54,7 +54,7 @@ const logos = [
   },
   {
     name: 'Nike',
-    href: '/share/01JMFN4FHEYQY3CBR7B4YBZFK9',
+    href: '/share/01JMFN4FHEYQY3CBR7B4YBZFK9?edgeBlur=0.01',
     src: '/logos/nike.svg',
   },
   // {
