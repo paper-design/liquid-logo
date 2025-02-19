@@ -144,8 +144,7 @@ void main() {
     opacity *= get_img_frame_alpha(img_uv, 1e-2);
 
 
-    float noise = 0.;
-    // float noise = snoise(vUv - t);
+    float noise = snoise(vUv - t);
 
     edge += (1. - edge) * u_liquid * noise;
 
