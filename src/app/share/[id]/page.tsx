@@ -72,4 +72,9 @@ const logos = [
     href: '/share/01JMFNF83EX5DAVWF1TP1469BW?edgeBlur=0.15',
     src: '/logos/chanel.svg',
   },
+  {
+    name: 'Volkswagen',
+    href: '/share/01JMFPD47QAN0FXMWWQC8YG8SY?edgeBlur=0.01',
+    src: '/logos/volkswagen.svg',
+  },
 ];
