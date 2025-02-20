@@ -45,7 +45,7 @@ export default async function Page({ params }: PageProps) {
         </Suspense>
       </div>
 
-      <div className="mb-16 flex w-full gap-24 overflow-scroll overscroll-x-contain p-16 text-sm select-none *:first:ml-auto *:last:mr-auto">
+      <div className="scrollbar-thin flex w-full gap-24 overflow-x-scroll overflow-y-hidden overscroll-x-contain p-16 pb-32 text-sm select-none *:first:ml-auto *:last:mr-auto">
         {logos.map((group, i) => (
           <Fragment key={i}>
             <div key={i} className="flex">

@@ -50,6 +50,8 @@
     background-color: #000;
     color: white;
 
+    color-scheme: dark;
+
     font-size: var(--text-base);
     line-height: var(--text-base--line-height);
     letter-spacing: var(--text-base--letter-spacing);

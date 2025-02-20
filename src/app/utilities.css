@@ -35,3 +35,16 @@
 @utility tracking-* {
   letter-spacing: calc(--value(integer) * 0.0001em);
 }
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+  }
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+}
