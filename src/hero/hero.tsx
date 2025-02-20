@@ -264,7 +264,9 @@ export function Hero({ imageId }: HeroProps) {
         </div>
 
         <Control
-          label="Refraction"
+          label="Dispersion"
+          // note we renamed refraction to dispersion but many share links already call it refraction so we're just making a label change for now
+          // we could update it to dispersion everywhere if we have time to rewrite the querystring parser to use either name and map it into dispersion
           value={state.refraction}
           min={params.refraction.min}
           max={params.refraction.max}
