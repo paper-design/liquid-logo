@@ -9,7 +9,7 @@ uniform float u_time;
 uniform float u_ratio;
 uniform float u_img_ratio;
 uniform float u_patternScale;
-uniform float u_refraction;
+uniform float u_dispersion;
 uniform float u_edge;
 uniform float u_patternBlur;
 uniform float u_liquid;
@@ -182,13 +182,13 @@ void main() {
     refr_b += (smoothstep(0., .4, uv.y) * smoothstep(.8, .1, uv.y)) * (smoothstep(.4, .6, bulge) * smoothstep(.8, .4, bulge));
     refr_b -= .2 * edge;
 
-    refr_r *= u_refraction;
-    refr_b *= u_refraction;
+    refr_r *= u_dispersion;
+    refr_b *= u_dispersion;
 
     vec3 w = vec3(thin_strip_1_width, thin_strip_2_width, wide_strip_ratio);
     w[1] -= .02 * smoothstep(.0, 1., edge + bulge);
     float stripe_r = mod(dir + refr_r, 1.);
-    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02 + .03 * u_refraction * bulge, bulge);
+    float r = get_color_channel(color1.r, color2.r, stripe_r, w, 0.02 + .03 * u_dispersion * bulge, bulge);
     float stripe_g = mod(dir, 1.);
     float g = get_color_channel(color1.g, color2.g, stripe_g, w, 0.01 / (1. - diagonal), bulge);
     float stripe_b = mod(dir - refr_b, 1.);

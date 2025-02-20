@@ -1,6 +1,6 @@
 export type ShaderParams = {
   patternScale: number;
-  refraction: number;
+  dispersion: number;
   edge: number;
   patternBlur: number;
   liquid: number;
@@ -8,7 +8,7 @@ export type ShaderParams = {
 };
 
 export const params = {
-  refraction: {
+  dispersion: {
     min: 0,
     max: 0.06,
     step: 0.001,

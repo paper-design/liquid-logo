@@ -265,12 +265,12 @@ export function Hero({ imageId }: HeroProps) {
         </div>
 
         <Control
-          label="Refraction"
-          value={state.refraction}
-          min={params.refraction.min}
-          max={params.refraction.max}
-          step={params.refraction.step}
-          onValueChange={(value) => setState((state) => ({ ...state, refraction: value }))}
+          label="dispersion"
+          value={state.dispersion}
+          min={params.dispersion.min}
+          max={params.dispersion.max}
+          step={params.dispersion.step}
+          onValueChange={(value) => setState((state) => ({ ...state, dispersion: value }))}
         />
         <Control
           label="Edge"
