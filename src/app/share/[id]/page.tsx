@@ -45,12 +45,12 @@ export default async function Page({ params }: PageProps) {
         </Suspense>
       </div>
 
-      <div className="scrollbar-thin flex w-full gap-24 overflow-x-scroll overflow-y-hidden overscroll-x-contain p-16 pb-32 text-sm select-none *:first:ml-auto *:last:mr-auto">
+      <div className="flex w-full gap-24 overflow-x-scroll overflow-y-hidden overscroll-x-contain p-16 pb-32 text-sm scrollbar-thin select-none *:first:ml-auto *:last:mr-auto">
         {logos.map((group, i) => (
           <Fragment key={i}>
             <div key={i} className="flex">
               {group.map(({ name, href, src }) => (
-                <NextLink key={src} href={href} className="group flex flex-col gap-8 text-center">
+                <NextLink key={src} href={href} scroll={false} className="group flex flex-col gap-8 text-center">
                   <div className="flex h-100 w-160 items-center justify-center rounded-8 p-24 opacity-40 outline -outline-offset-1 outline-transparent transition-[opacity,outline] duration-150 group-hover:opacity-100 group-hover:outline-white/40 hover:duration-0">
                     <img alt={name + ' Logo'} src={src} className="h-52 w-152 object-contain" />
                   </div>
