@@ -29,7 +29,6 @@ export function Hero({ imageId }: HeroProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const searchParamsDebounce = useRef(0);
   const searchParamsPendingUpdate = useRef(false);
 
   const stateRef = useRef(state);
@@ -68,12 +67,8 @@ export function Hero({ imageId }: HeroProps) {
   useEffect(() => {
     stateRef.current = state;
 
-    if (isEqual(defaultState, state)) {
-      router.replace(pathname, { scroll: false });
-      return;
-    }
-
-    function updateSearchParams() {
+    // Debounce the history updates (Safari doesn't like frequent URL updates)
+    const timeoutId = setTimeout(() => {
       const searchParams = new URLSearchParams();
 
       Object.entries(stateRef.current).forEach(([key, value]) => {
@@ -85,29 +80,11 @@ export function Hero({ imageId }: HeroProps) {
       });
 
       searchParamsPendingUpdate.current = false;
-      router.replace(pathname + '?' + searchParams.toString(), { scroll: false });
-    }
+      window.history.replaceState({}, '', pathname + '?' + searchParams.toString());
+    }, 250); // Add 250ms delay between updates
 
-    // Update with a debounce (neither Next.js router nor Safari like frequent URL updates)
-
-    if (searchParamsDebounce.current) {
-      clearTimeout(searchParamsDebounce.current);
-
-      searchParamsPendingUpdate.current = true;
-      searchParamsDebounce.current = window.setTimeout(() => {
-        updateSearchParams();
-        searchParamsDebounce.current = 0;
-      }, 100);
-
-      return;
-    }
-
-    updateSearchParams();
-
-    searchParamsDebounce.current = window.setTimeout(() => {
-      searchParamsDebounce.current = 0;
-    }, 100);
-  }, [state]);
+    return () => clearTimeout(timeoutId);
+  }, [state, pathname]);
 
   useEffect(() => {
     if (searchParamsPendingUpdate.current) {
@@ -176,7 +153,7 @@ export function Hero({ imageId }: HeroProps) {
               // Update the URL for sharing
               if (typeof window !== 'undefined' && typeof imageId === 'string' && imageId.length > 0) {
                 // const currentParams = searchParams.values.length ? '?' + searchParams.toString() : '';
-                router.push(`/share/${imageId}`, { scroll: false });
+                window.history.pushState({}, '', `/share/${imageId}`);
               }
             })
             .catch(console.error)

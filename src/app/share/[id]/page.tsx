@@ -19,7 +19,20 @@ export default async function Page({ params }: PageProps) {
           <PaperLogo />
         </a>
 
-        <span className="pt-8 md:absolute md:left-1/2 md:-translate-x-1/2">Liquid Metal Shader</span>
+        <span className="pt-8 md:absolute md:left-1/2 md:-translate-x-1/2">
+          <a
+            href="https://www.producthunt.com/posts/liquid-metal?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-liquid&#0045;metal"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=896993&theme=dark&t=1740036883372"
+              alt="Liquid&#0032;Metal - Turn&#0032;your&#0032;logo&#0032;into&#0032;Apple&#0032;liquid&#0032;metal | Product Hunt"
+              style={{ width: '250px', height: '54px' }}
+              width="250"
+              height="54"
+            />
+          </a>
+        </span>
 
         <span className="sm:gap-28 flex gap-24 pt-8">
           <NextLink className="hover:underline" href="https://x.com/paper">
