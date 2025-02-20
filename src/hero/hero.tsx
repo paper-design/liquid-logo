@@ -256,7 +256,7 @@ export function Hero({ imageId }: HeroProps) {
             }}
           >
             <input
-              className="h-0 w-0"
+              className="h-full w-full cursor-pointer rounded-full opacity-0"
               type="color"
               onChange={(event) => setState({ ...state, background: event.currentTarget.value })}
             />
