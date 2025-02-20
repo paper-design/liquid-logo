@@ -11,6 +11,7 @@
   "dependencies": {
     "@base-ui-components/react": "1.0.0-alpha.6",
     "@paper-design/shaders-react": "0.0.21",
+    "@vercel/analytics": "^1.5.0",
     "@vercel/blob": "0.27.1",
     "clsx": "^2.1.1",
     "lodash-es": "^4.17.21",
