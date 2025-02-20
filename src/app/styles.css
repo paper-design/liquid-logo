@@ -9,8 +9,8 @@
 @theme {
   --*: initial;
 
+  --breakpoint-sm: 600px;
   --breakpoint-md: 1200px;
-  --breakpoint-lg: 1400px;
 
   --spacing: 1px;
   --default-font-family: Matter, sans-serif;
@@ -66,5 +66,5 @@
 }
 
 body {
-  min-width: 600px;
+  min-width: 480px;
 }

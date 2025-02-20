@@ -1,7 +1,5 @@
 import { PaperLogo } from '@/app/paper-logo';
 import { Hero } from '@/hero/hero';
-import { Slider } from '@base-ui-components/react';
-import Image from 'next/image';
 import NextLink from 'next/link';
 import { Fragment, Suspense } from 'react';
 
@@ -19,7 +17,7 @@ export default async function Page({ params }: PageProps) {
           <PaperLogo />
         </a>
 
-        <span className="pt-8 md:absolute md:left-1/2 md:-translate-x-1/2">
+        <span className="scale-80 pt-8 max-sm:scale-65 md:absolute md:left-1/2 md:-translate-x-1/2">
           <a
             href="https://www.producthunt.com/posts/liquid-metal?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-liquid&#0045;metal"
             target="_blank"
@@ -34,20 +32,20 @@ export default async function Page({ params }: PageProps) {
           </a>
         </span>
 
-        <span className="sm:gap-28 flex gap-24 pt-8">
+        <span className="flex gap-24 pt-8 sm:gap-28">
           <NextLink className="hover:underline" href="https://x.com/paper">
             @paper
           </NextLink>
         </span>
       </div>
 
-      <div className="pb-80">
+      <div className="pb-48 sm:pb-80">
         <Suspense>
           <Hero imageId={id} />
         </Suspense>
       </div>
 
-      <div className="mb-16 flex w-full gap-24 overflow-scroll p-16 text-sm select-none *:first:ml-auto *:last:mr-auto">
+      <div className="mb-16 flex w-full gap-24 overflow-scroll overscroll-x-contain p-16 text-sm select-none *:first:ml-auto *:last:mr-auto">
         {logos.map((group, i) => (
           <Fragment key={i}>
             <div key={i} className="flex">

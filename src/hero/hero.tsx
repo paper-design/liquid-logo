@@ -25,7 +25,6 @@ const defaultState = { ...defaultParams, background: 'metal' };
 export function Hero({ imageId }: HeroProps) {
   const [state, setState] = useState<State>(defaultState);
   const [dragging, setDragging] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -207,11 +206,11 @@ export function Hero({ imageId }: HeroProps) {
         </div>
       </div>
 
-      <div className="grid grid-cols-[auto_160px_100px] items-center gap-x-24 gap-y-12 rounded-8 p-16 outline outline-white/20">
+      <div className="grid auto-rows-[minmax(40px,auto)] grid-cols-[auto_200px] items-center gap-x-24 gap-y-12 rounded-8 p-16 outline outline-white/20 sm:grid-cols-[auto_160px_100px]">
         <div>
           <label className="pr-16 text-nowrap">Background</label>
         </div>
-        <div className="col-span-2 flex h-40 items-center gap-9">
+        <div className="flex h-40 items-center gap-9 sm:col-span-2">
           <button
             className="size-28 cursor-pointer rounded-full text-[0px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
             style={{ background: 'linear-gradient(to bottom, #eee, #b8b8b8)' }}
@@ -314,7 +313,7 @@ export function Hero({ imageId }: HeroProps) {
           onValueChange={(value) => setState((state) => ({ ...state, patternScale: value }))}
         />
 
-        <div className="col-span-3 mt-12">
+        <div className="col-span-full mt-12">
           <label
             htmlFor="file-input"
             className="mb-16 flex h-40 cursor-pointer items-center justify-center rounded-4 bg-button font-medium select-none"
@@ -363,7 +362,7 @@ function Control({ label, min, max, step, format, value, onValueChange }: Contro
           </Slider.Track>
         </Slider.Root>
       </div>
-      <div>
+      <div className="max-sm:hidden">
         <NumberInput
           id={label}
           min={min}
