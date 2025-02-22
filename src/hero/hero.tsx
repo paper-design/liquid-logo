@@ -192,12 +192,12 @@ export function Hero({ imageId }: HeroProps) {
         handleFiles(files);
       }}
     >
-      <div className='flex flex-col relative'>
+      <div className='flex flex-col relative h-full'>
         <div className='-top-45 right-0 absolute'>
           <Recorder canvasRef={canvasRef} className=""></Recorder>
         </div>
         <div
-          className="flex aspect-square w-full items-center justify-center rounded-10"
+          className="flex aspect-square w-full items-center justify-center rounded-10 h-full"
           style={{
             background: (() => {
               switch (state.background) {
