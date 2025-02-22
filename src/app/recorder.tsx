@@ -2,6 +2,7 @@
 
 import { useStopWatch } from '@/hooks/use-stop-watch';
 import { useState, useRef, type JSX } from 'react';
+import { toast } from 'sonner';
 
 type RecordingControls = {
   stop: () => void;
@@ -41,10 +42,9 @@ function record(canvasRef: React.RefObject<HTMLCanvasElement | null>): Recording
     };
 
     mediaRecorder.start(1000);
-    console.log('MediaRecorder started successfully');
     return { stop: () => mediaRecorder.stop() };
   } catch (error) {
-    console.error('Recording failed:', error);
+    toast.error(`Recording failed: ${error}`);
     return null;
   }
 }
@@ -60,6 +60,7 @@ function Recorder({ className, canvasRef }: RecorderProps): JSX.Element {
   const recordingRef = useRef<RecordingControls | null>(null);
 
   const toggleRecording = () => {
+    console.log(canvasRef.current);
     if (!canvasRef.current) return;
 
     if (isRecording) {

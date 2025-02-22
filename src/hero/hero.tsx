@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { parseLogoImage } from './parse-logo-image';
 import { uploadImage } from '@/hero/upload-image';
 import isEqual from 'lodash-es/isEqual';
+import Recorder from '@/app/recorder';
 
 interface HeroProps {
   imageId: string;
@@ -35,8 +36,10 @@ export function Hero({ imageId }: HeroProps) {
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const [processing, setProcessing] = useState<boolean>(true);
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   // Check URL for image ID on mount
   useEffect(() => {
+    console.log(canvasRef);
     setProcessing(true);
 
     async function updateImageData() {
@@ -61,7 +64,7 @@ export function Hero({ imageId }: HeroProps) {
     }
 
     updateImageData();
-  }, [imageId]);
+  }, [imageId, canvasRef]);
 
   useEffect(() => {
     stateRef.current = state;
@@ -189,20 +192,25 @@ export function Hero({ imageId }: HeroProps) {
         handleFiles(files);
       }}
     >
-      <div
-        className="flex aspect-square w-full items-center justify-center rounded-10"
-        style={{
-          background: (() => {
-            switch (state.background) {
-              case 'metal':
-                return 'linear-gradient(to bottom, #eee, #b8b8b8)';
-            }
-            return state.background;
-          })(),
-        }}
-      >
-        <div className="aspect-square w-400">
-          {imageData && <Canvas imageData={imageData} params={state} processing={processing} />}
+      <div className='flex flex-col relative'>
+        <div className='-top-45 right-0 absolute'>
+          <Recorder canvasRef={canvasRef} className=""></Recorder>
+        </div>
+        <div
+          className="flex aspect-square w-full items-center justify-center rounded-10"
+          style={{
+            background: (() => {
+              switch (state.background) {
+                case 'metal':
+                  return 'linear-gradient(to bottom, #eee, #b8b8b8)';
+              }
+              return state.background;
+            })(),
+          }}
+        >
+          <div className="aspect-square w-400">
+            {imageData && <Canvas ref={canvasRef} imageData={imageData} params={state} processing={processing} />}
+          </div>
         </div>
       </div>
 
