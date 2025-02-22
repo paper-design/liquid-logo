@@ -17,20 +17,7 @@ export default async function Page({ params }: PageProps) {
           <PaperLogo />
         </a>
 
-        <span className="scale-80 pt-8 max-sm:scale-65 md:absolute md:left-1/2 md:-translate-x-1/2">
-          <a
-            href="https://www.producthunt.com/posts/liquid-metal?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-liquid&#0045;metal"
-            target="_blank"
-          >
-            <img
-              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=896993&theme=dark&t=1740036883372"
-              alt="Liquid&#0032;Metal - Turn&#0032;your&#0032;logo&#0032;into&#0032;Apple&#0032;liquid&#0032;metal | Product Hunt"
-              style={{ width: '250px', height: '54px' }}
-              width="250"
-              height="54"
-            />
-          </a>
-        </span>
+        <span className="scale-80 pt-8 max-sm:scale-65 md:absolute md:left-1/2 md:-translate-x-1/2"></span>
 
         <span className="flex gap-24 pt-8 sm:gap-28">
           <NextLink className="hover:underline" href="https://x.com/paper">
@@ -112,9 +99,9 @@ const logos = [
     //   src: '/logos/remix.svg',
     // },
     {
-      name: 'Cloudflare',
-      href: '/share/01JMFQZ01HE5Q0TR647QV5W6YW',
-      src: '/logos/cloudflare.svg',
+      name: 'Paper',
+      href: '/share/01JMP2MVEWNE5CZYXW94JQME35',
+      src: '/logos/paper.svg',
     },
   ],
 ];
