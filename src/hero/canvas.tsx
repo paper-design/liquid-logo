@@ -1,9 +1,8 @@
 'use client';
 
 import { liquidFragSource } from '@/app/hero/liquid-frag';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Ref, type RefObject} from 'react';
 import { toast } from 'sonner';
-
 // uniform sampler2D u_image_texture;
 // uniform float u_time;
 // uniform float u_ratio;
@@ -38,10 +37,12 @@ export function Canvas({
   imageData,
   params,
   processing,
+  ref
 }: {
   imageData: ImageData;
   params: ShaderParams;
   processing: boolean;
+  ref: RefObject<HTMLCanvasElement | null>
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gl, setGl] = useState<WebGL2RenderingContext | null>(null);
@@ -250,6 +251,12 @@ export function Canvas({
       }
     };
   }, [gl, uniforms, imageData]);
+
+  useEffect(() => {
+    if(ref && canvasRef.current){
+      ref.current = canvasRef.current;
+    }
+  },[canvasRef,ref])
 
   return <canvas ref={canvasRef} className="block h-full w-full object-contain" />;
 }
