@@ -110,16 +110,19 @@ void main() {
   vec4 img = texture(u_image_texture, img_uv);
 
   float edge = img.r;
-  float imageShape = 1. - smoothstep(.5, .7, edge);
+  float imageShape = 1. - smoothstep(.4, .7, edge);
   
   uv += .8 * imageShape * pow(img.r, 3.);
   uv += .4 * imageShape * pow(img.r, 1.);
+  uv *= (1. + .1 * length(uv) * imageShape);
   
   vec3 color = background(uv, t);
   color.r = background(uv + .1 * edge * imageShape, t).r;
  
-    color += .3 * edge * imageShape;
-    color += .05 * imageShape;
+    color += .4 * edge * imageShape;
+    color += .3 * edge * imageShape * max(0., length(color.rb) - 1.);
+//    color -= .7 * edge * imageShape * max(0., length(color) - 1.);
+    color += .07 * imageShape;
 
   fragColor = vec4(color, 1.);
 }
