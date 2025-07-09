@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next/types';
 import './styles.css';
 import { Analytics } from '@vercel/analytics/react';
+import { Toaster } from 'sonner';
 
 export default function Layout({ children }: React.PropsWithChildren) {
   return (
@@ -10,6 +11,7 @@ export default function Layout({ children }: React.PropsWithChildren) {
       </head>
       <body>
         {children}
+        <Toaster />
         <Analytics />
       </body>
     </html>

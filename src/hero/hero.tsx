@@ -6,11 +6,12 @@ import { Canvas } from './canvas';
 import { Slider } from 'radix-ui';
 import { NumberInput } from '@/app/number-input';
 import { roundOptimized } from '@/app/round-optimized';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { parseLogoImage } from './parse-logo-image';
+import { parseLogoImage, parseLogoInWorker } from './parse-logo-image';
 import { uploadImage } from '@/hero/upload-image';
-import isEqual from 'lodash-es/isEqual';
+import Spinner from '@/components/spinner';
+import { validateFile } from '@/utils/validate-file';
 
 interface HeroProps {
   imageId: string;
@@ -21,6 +22,7 @@ type State = ShaderParams & {
 };
 
 const defaultState = { ...defaultParams, background: 'metal' };
+
 
 export function Hero({ imageId }: HeroProps) {
   const [state, setState] = useState<State>(defaultState);
@@ -34,6 +36,11 @@ export function Hero({ imageId }: HeroProps) {
 
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const [processing, setProcessing] = useState<boolean>(true);
+
+  const [zoom, setZoom] = useState(400);
+  const ZOOM_STEP = 50;
+  const MIN_ZOOM = 100;
+  const MAX_ZOOM = 800;
 
   // Check URL for image ID on mount
   useEffect(() => {
@@ -119,48 +126,34 @@ export function Hero({ imageId }: HeroProps) {
     }
   }, [searchParams]);
 
+
   const handleFileInput = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      handleFiles(files);
+    const file = event.target.files?.[0];
+    if (file && validateFile(file)) {
+      handleFiles(file);
     }
   }, []);
 
-  const handleFiles = async (files: FileList) => {
-    if (files.length > 0) {
-      const file = files[0];
-      const fileType = file.type;
 
-      // Check file size (4.5MB = 4.5 * 1024 * 1024 bytes)
-      const maxSize = 4.5 * 1024 * 1024;
-      if (file.size > maxSize) {
-        toast.error('File size must be less than 4.5MB');
-        return;
+  const handleFiles = async (file: File) => {
+    setProcessing(true);
+    try {
+      // used worker process to process image as image processing is cpu intensive
+      // if you need old version just call parseLogoImage() thats it.
+      const { imageData, pngBlob } = await parseLogoInWorker(file)
+      setImageData(imageData);
+
+      const uploadImageId: string = await uploadImage(pngBlob)
+      if (uploadImageId && typeof window !== 'undefined') {
+        window.history.pushState({}, '', `/share/${uploadImageId}`);
       }
-
-      // Check if file is an image or SVG
-      if (fileType.startsWith('image/') || fileType === 'image/svg+xml') {
-        setProcessing(true);
-        parseLogoImage(file).then(({ imageData, pngBlob }) => {
-          // Set the image data for the shader to pick up
-          setImageData(imageData);
-          setProcessing(false);
-
-          // Upload the image
-          uploadImage(pngBlob)
-            .then((imageId) => {
-              // Update the URL for sharing
-              if (typeof window !== 'undefined' && typeof imageId === 'string' && imageId.length > 0) {
-                // const currentParams = searchParams.values.length ? '?' + searchParams.toString() : '';
-                window.history.pushState({}, '', `/share/${imageId}`);
-              }
-            })
-            .catch(console.error)
-            .finally(() => setProcessing(false));
-        });
-      } else {
-        toast.error('Please upload only images or SVG files');
-      }
+    }
+    catch (error) {
+      toast.error('Image processing/upload failed');
+      console.error(error);
+    }
+    finally {
+      setProcessing(false)
     }
   };
 
@@ -186,7 +179,7 @@ export function Hero({ imageId }: HeroProps) {
         event.stopPropagation();
         setDragging(false);
         const files = event.dataTransfer.files;
-        handleFiles(files);
+        handleFiles(files[0]);
       }}
     >
       <div
@@ -201,9 +194,13 @@ export function Hero({ imageId }: HeroProps) {
           })(),
         }}
       >
-        <div className="aspect-square w-400">
+        <div
+          className="aspect-square"
+          style={{ width: `${zoom}px` }}
+        >
           {imageData && <Canvas imageData={imageData} params={state} processing={processing} />}
         </div>
+
       </div>
 
       <div className="grid auto-rows-[minmax(40px,auto)] grid-cols-[auto_200px] items-center gap-x-24 gap-y-12 rounded-8 p-16 outline outline-white/20 sm:grid-cols-[auto_160px_100px]">
@@ -314,14 +311,35 @@ export function Hero({ imageId }: HeroProps) {
           format={(value) => (value === '0' || value === '10' ? value : parseFloat(value).toFixed(1))}
           onValueChange={(value) => setState((state) => ({ ...state, patternScale: value }))}
         />
+        <Control
+          label="Zoom"
+          value={zoom}
+          min={MIN_ZOOM}
+          max={MAX_ZOOM}
+          step={ZOOM_STEP}
+          format={(value) => `${value}px`}
+          onValueChange={(value) => setZoom(value)}
+        />
+
 
         <div className="col-span-full mt-12">
+
           <label
             htmlFor="file-input"
             className="mb-16 flex h-40 cursor-pointer items-center justify-center rounded-4 bg-button font-medium select-none"
           >
-            <input type="file" accept="image/*,.svg" onChange={handleFileInput} id="file-input" className="hidden" />
-            Upload image
+            <input
+              disabled={processing}
+              type="file"
+              accept="image/*,.svg"
+              onChange={handleFileInput}
+              id="file-input"
+              className="hidden"
+            />
+            {processing
+              ? <Spinner />
+              : 'Upload image'
+            }
           </label>
           <p className="w-fill text-sm text-white/80">
             Tips: transparent or white background is required. Shapes work better than words. Use an SVG or a
