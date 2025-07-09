@@ -1,5 +1,7 @@
 'use client';
 
+import { toast } from "sonner";
+
 /** Cleans up the input image by turning it into a black and white mask with a beveled edge */
 
 export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngBlob: Blob }> {
@@ -177,3 +179,30 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
     img.src = URL.createObjectURL(file);
   });
 }
+
+
+  export const parseLogoInWorker = (file: File): Promise<{ imageData: ImageData, pngBlob: Blob }> => {
+
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL('@/public/parse-logo-worker.ts', import.meta.url), { type: 'module' });
+      worker.postMessage(file);
+
+      worker.onerror = (e) => {
+        toast.error('Worker error');
+        reject(e);
+        worker.terminate();
+      };
+
+      worker.onmessage = (e) => {
+        const { imageData, pngBlob, error } = e.data;
+        if (error) {
+          toast.error('Image parsing failed: ' + error);
+          reject(new Error(error));
+        } else {
+          resolve({ imageData, pngBlob });
+        }
+        worker.terminate();
+      };
+    })
+
+  }
