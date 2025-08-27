@@ -52,7 +52,6 @@ export function Hero({ imageId }: HeroProps) {
       );
 
       if (logo) {
-        // Found the logo, let's create a blog of the file and then process it.
         processImageData(logo.src);
       }
 
