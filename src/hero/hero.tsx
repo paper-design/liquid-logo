@@ -40,7 +40,6 @@ export function Hero({ imageId }: HeroProps) {
   // Check URL for image ID on mount
   useEffect(() => {
     if (shouldForciblyParseLogo) {
-      // During development we skip using the pre-processed images so we can test the parse logo flow.
       let logo: Logo | undefined;
 
       logos.forEach((group) =>
