@@ -12,6 +12,9 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
       return;
     }
 
+    const blurSize = 80;
+    const blurPadding = 120;
+
     const img = new Image();
     img.onload = function () {
       // Force SVG to load at a high fidelity size if it's an SVG
@@ -49,27 +52,47 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
       canvas.width = width;
       canvas.height = height;
 
+      const ratio = width / height;
+
       // Draw the user image on an offscreen canvas.
       const shapeCanvas = document.createElement('canvas');
       shapeCanvas.width = width;
       shapeCanvas.height = height;
       const shapeCtx = shapeCanvas.getContext('2d')!;
-      shapeCtx.drawImage(img, 0, 0, width, height);
+      shapeCtx.filter = "grayscale(100%)";
+      shapeCtx.fillStyle = "white";
+      shapeCtx.fillRect(0, 0, width, height);
+      shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
 
       // 1) Build the inside/outside mask:
       // Non-shape pixels: pure white (255,255,255,255) or fully transparent.
       // Everything else is part of a shape.
       const shapeImageData = shapeCtx.getImageData(0, 0, width, height);
       const data = shapeImageData.data;
+
+      shapeCtx.fillRect(0, 0, width, height);
+      shapeCtx.filter = 'blur(' + blurSize + 'px)';
+      shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
+      shapeCtx.filter = 'blur(' + (.3 * blurSize) + 'px)';
+      shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
+      const outerBlurData = shapeCtx.getImageData(0, 0, width, height).data;
+
+      shapeCtx.fillRect(0, 0, width, height);
+      shapeCtx.filter = 'blur(' + (.6 * blurSize) + 'px)';
+      shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
+      const innerBlurData = shapeCtx.getImageData(0, 0, width, height).data;
+
+
       const shapeMask = new Array(width * height).fill(false);
       for (var y = 0; y < height; y++) {
         for (var x = 0; x < width; x++) {
           var idx4 = (y * width + x) * 4;
           var r = data[idx4];
-          var g = data[idx4 + 1];
-          var b = data[idx4 + 2];
+          // var g = data[idx4 + 1];
+          // var b = data[idx4 + 2];
           var a = data[idx4 + 3];
-          if ((r === 255 && g === 255 && b === 255 && a === 255) || a === 0) {
+          // if ((r === 255 && g === 255 && b === 255 && a === 255) || a === 0) {
+          if ((r === 255 && a === 255) || a === 0) {
             shapeMask[y * width + x] = false;
           } else {
             shapeMask[y * width + x] = true;
@@ -137,7 +160,6 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
       for (var i = 0; i < width * height; i++) {
         if (u[i] > maxVal) maxVal = u[i];
       }
-      const alpha = 2.0; // Adjust for contrast.
       const outImg = ctx.createImageData(width, height);
 
       for (var y = 0; y < height; y++) {
@@ -145,19 +167,16 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
           var idx = y * width + x;
           var px = idx * 4;
           if (!shapeMask[idx]) {
-            outImg.data[px] = 255;
-            outImg.data[px + 1] = 255;
-            outImg.data[px + 2] = 255;
-            outImg.data[px + 3] = 255;
+            outImg.data[px] = 0;
+            outImg.data[px + 1] = 255 - outerBlurData[px + 1];
+            outImg.data[px + 2] = 0;
           } else {
-            const raw = u[idx] / maxVal;
-            const remapped = Math.pow(raw, alpha);
-            const gray = 255 * (1 - remapped);
-            outImg.data[px] = gray;
-            outImg.data[px + 1] = gray;
-            outImg.data[px + 2] = gray;
-            outImg.data[px + 3] = 255;
+            const remapped = u[idx] / maxVal;
+            outImg.data[px] = 255 * (1 - remapped);
+            outImg.data[px + 1] = 0;
+            outImg.data[px + 2] = innerBlurData[px + 2];
           }
+          outImg.data[px + 3] = 255;
         }
       }
       ctx.putImageData(outImg, 0, 0);
