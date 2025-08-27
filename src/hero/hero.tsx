@@ -6,11 +6,11 @@ import { Canvas } from './canvas';
 import { Slider } from 'radix-ui';
 import { NumberInput } from '@/app/number-input';
 import { roundOptimized } from '@/app/round-optimized';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { parseLogoImage } from './parse-logo-image';
 import { uploadImage } from '@/hero/upload-image';
-import isEqual from 'lodash-es/isEqual';
+import { logos, type Logo } from '@/hero/logos';
 
 interface HeroProps {
   imageId: string;
@@ -35,8 +35,30 @@ export function Hero({ imageId }: HeroProps) {
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const [processing, setProcessing] = useState<boolean>(true);
 
+  const shouldForciblyParseLogo = process.env.NODE_ENV === 'development';
+
   // Check URL for image ID on mount
   useEffect(() => {
+    if (shouldForciblyParseLogo) {
+      // During development we skip using the pre-processed images so we can test the parse logo flow.
+      let logo: Logo | undefined;
+
+      logos.forEach((group) =>
+        group.forEach((groupLogo) => {
+          if (groupLogo.id === imageId) {
+            logo = groupLogo;
+          }
+        })
+      );
+
+      if (logo) {
+        // Found the logo, let's create a blog of the file and then process it.
+        processImageData(logo.src);
+      }
+
+      return;
+    }
+
     setProcessing(true);
 
     async function updateImageData() {
@@ -126,6 +148,32 @@ export function Hero({ imageId }: HeroProps) {
     }
   }, []);
 
+  const processImageData = async (data: File | string) => {
+    setProcessing(true);
+    parseLogoImage(data).then(({ imageData, pngBlob }) => {
+      // Set the image data for the shader to pick up
+      setImageData(imageData);
+      setProcessing(false);
+
+      if (typeof data === 'string') {
+        // Skip uploading for image paths as they're already uploaded somewhere!
+        return;
+      }
+
+      // Upload the image
+      uploadImage(pngBlob)
+        .then((imageId) => {
+          // Update the URL for sharing
+          if (typeof window !== 'undefined' && typeof imageId === 'string' && imageId.length > 0) {
+            // const currentParams = searchParams.values.length ? '?' + searchParams.toString() : '';
+            window.history.pushState({}, '', `/share/${imageId}`);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setProcessing(false));
+    });
+  };
+
   const handleFiles = async (files: FileList) => {
     if (files.length > 0) {
       const file = files[0];
@@ -140,24 +188,7 @@ export function Hero({ imageId }: HeroProps) {
 
       // Check if file is an image or SVG
       if (fileType.startsWith('image/') || fileType === 'image/svg+xml') {
-        setProcessing(true);
-        parseLogoImage(file).then(({ imageData, pngBlob }) => {
-          // Set the image data for the shader to pick up
-          setImageData(imageData);
-          setProcessing(false);
-
-          // Upload the image
-          uploadImage(pngBlob)
-            .then((imageId) => {
-              // Update the URL for sharing
-              if (typeof window !== 'undefined' && typeof imageId === 'string' && imageId.length > 0) {
-                // const currentParams = searchParams.values.length ? '?' + searchParams.toString() : '';
-                window.history.pushState({}, '', `/share/${imageId}`);
-              }
-            })
-            .catch(console.error)
-            .finally(() => setProcessing(false));
-        });
+        processImageData(file);
       } else {
         toast.error('Please upload only images or SVG files');
       }
