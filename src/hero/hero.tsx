@@ -20,7 +20,7 @@ type State = ShaderParams & {
   background: string;
 };
 
-const defaultState = { ...defaultParams, background: 'metal' };
+const defaultState = { ...defaultParams, background: 'black' };
 
 export function Hero({ imageId }: HeroProps) {
   const [state, setState] = useState<State>(defaultState);
@@ -220,15 +220,6 @@ export function Hero({ imageId }: HeroProps) {
     >
       <div
         className="flex aspect-square w-full items-center justify-center rounded-10"
-        style={{
-          background: (() => {
-            switch (state.background) {
-              case 'metal':
-                return 'linear-gradient(to bottom, #eee, #b8b8b8)';
-            }
-            return state.background;
-          })(),
-        }}
       >
         <div className="aspect-square w-500">
           {imageData && <Canvas imageData={imageData} params={state} processing={processing} />}

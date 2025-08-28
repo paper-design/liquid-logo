@@ -12,18 +12,15 @@ export function parseLogoImage(file: File | string): Promise<{ imageData: ImageD
       return;
     }
 
-    const blurSize = 80;
-    const blurPadding = 120;
-
     const img = new Image();
     img.onload = function () {
       // Force SVG to load at a high fidelity size if it's an SVG
       if (typeof file === 'string' ? file.endsWith('.svg') : file.type === 'image/svg+xml') {
-        img.width = 1000; // or whatever base size you prefer
-        img.height = 1000;
+        img.width = 500; // or whatever base size you prefer
+        img.height = 500;
       }
 
-      const MAX_SIZE = 1000;
+      const MAX_SIZE = 500;
       const MIN_SIZE = 500;
       let width = img.naturalWidth;
       let height = img.naturalHeight;
@@ -53,6 +50,8 @@ export function parseLogoImage(file: File | string): Promise<{ imageData: ImageD
       canvas.height = height;
 
       const ratio = width / height;
+      const blurSize = 80;
+      const blurPadding = 80;
 
       // Draw the user image on an offscreen canvas.
       const shapeCanvas = document.createElement('canvas');
@@ -78,10 +77,14 @@ export function parseLogoImage(file: File | string): Promise<{ imageData: ImageD
       const outerBlurData = shapeCtx.getImageData(0, 0, width, height).data;
 
       shapeCtx.fillRect(0, 0, width, height);
-      shapeCtx.filter = 'blur(' + (.6 * blurSize) + 'px)';
+      shapeCtx.filter = 'blur(' + 50 + 'px)';
       shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
       const innerBlurData = shapeCtx.getImageData(0, 0, width, height).data;
 
+      shapeCtx.fillRect(0, 0, width, height);
+      shapeCtx.filter = 'blur(2px)';
+      shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
+      const contourData = shapeCtx.getImageData(0, 0, width, height).data;
 
       const shapeMask = new Array(width * height).fill(false);
       for (var y = 0; y < height; y++) {
@@ -166,17 +169,15 @@ export function parseLogoImage(file: File | string): Promise<{ imageData: ImageD
         for (var x = 0; x < width; x++) {
           var idx = y * width + x;
           var px = idx * 4;
-          if (!shapeMask[idx]) {
-            outImg.data[px] = 0;
-            outImg.data[px + 1] = 255 - outerBlurData[px + 1];
-            outImg.data[px + 2] = 0;
-          } else {
-            const remapped = u[idx] / maxVal;
-            outImg.data[px] = 255 * (1 - remapped);
-            outImg.data[px + 1] = 0;
-            outImg.data[px + 2] = innerBlurData[px + 2];
+          const innerContour = u[idx] / maxVal;
+          let mixer = contourData[px] / 255;
+          function mix(a, b, t) {
+            return a * (1 - t) + b * t;
           }
-          outImg.data[px + 3] = 255;
+          outImg.data[px] = mix(255 * (1 - innerContour), 0, mixer);
+          outImg.data[px + 1] = mix(0, (255 - outerBlurData[px + 1]), mixer);
+          outImg.data[px + 2] = mix(innerBlurData[px + 2], 0, mixer);
+          outImg.data[px + 3] = contourData[px];
         }
       }
       ctx.putImageData(outImg, 0, 0);
