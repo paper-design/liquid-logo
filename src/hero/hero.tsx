@@ -35,11 +35,9 @@ export function Hero({ imageId }: HeroProps) {
   const [imageData, setImageData] = useState<ImageData | null>(null);
   const [processing, setProcessing] = useState<boolean>(true);
 
-  const shouldForciblyParseLogo = !!process.env.NEXT_FORCE_IMAGE_PARSING;
-
   // Check URL for image ID on mount
   useEffect(() => {
-    if (shouldForciblyParseLogo) {
+    if (!!process.env.NEXT_PUBLIC_FORCE_IMAGE_PARSING) {
       let logo: Logo | undefined;
 
       logos.forEach((group) =>
