@@ -80,9 +80,9 @@ vec2 rotate(vec2 uv, float th) {
 vec3 gradient(float t) {
   vec3 colors[4] = vec3[4](
     vec3(0., 0., 0.),
-    vec3(0., .3, 1.),
+    vec3(0., .45, 1.),
     vec3(1., 1., 0.),
-    vec3(1., 0., 0.)
+    vec3(1., .3, 0.)
   );
   float n = 4.;
   float scaled = t * n;
@@ -93,22 +93,26 @@ vec3 gradient(float t) {
   return mix(colors[i], colors[j], smoothstep(0., 1., f));
 }
 
+float remap(float cycle, float start, float stop) {
+  float range = max(stop - start, 1e-6);
+  return clamp((cycle - start) / range, 0.0, 1.0);
+}
+
 float getMask(float cycle, float y) {
-//  float maskGrowTime = clamp((cycle - 0.6) / (0.8 - 0.6), 0.0, 1.0);
-  float maskFadeTime = 1.0 - clamp((cycle - 0.9) / (1.0 - 0.9), 0.0, 1.0);
-  float maskGrowTime = clamp(3. * cycle, 0.0, 1.0);
-//  float maskFadeTime = clamp((cycle - 0.3) / 0.7, 0.0, 1.0);
+  float maskFadeTime = 1. - remap(cycle, .9, 1.);
+  float maskGrowTime = remap(cycle, .2, 1.);
 
   
   float maskPos = y;
-  float posY = .9 * cycle - .1;
+  float posY = -.2 + .85 * cycle;
 
   float mask = 0.;
   float movingDown = (smoothstep(posY, posY + .2, y) * smoothstep(posY + .6, posY + .2, y));
   movingDown *= maskFadeTime;
   mask += movingDown;
 
-  float growing = maskGrowTime * (smoothstep(-.1, -.1, y) * smoothstep(.5, -.1, y));
+  posY = -.2;
+  float growing = maskGrowTime * (smoothstep(posY, posY + .2, y) * smoothstep(posY + .6, posY + .2, y));
   mask += growing;
   
   
@@ -122,7 +126,6 @@ void main() {
   uv.x *= u_ratio;
   
   float t = .001 * u_time;
-//  t = u_refraction;
   
   vec2 imgUV = getImgUV();
   float imgSoftFrame = getImgFrame(imgUV, .3);
@@ -141,14 +144,14 @@ void main() {
   innerBlur += .5 * (radialMask - .5);
   
   float outerBlur = img.g;
-  cycle = mod(t + .2, 1.);
+  cycle = mod(t + .15, 1.);
   float outerMask = getMask(cycle, uv.y);
 
   outerBlur = pow(outerBlur, 1.2);
   float outer = outerBlur * (.5 + .5 * outerMask);
   
   float inner = innerBlur;
-  inner -= .5 * innerMask;
+  inner -= .4 * innerMask;
   inner = clamp(inner, 0., 1.);
 
   float heat = inner + outer;
@@ -157,5 +160,6 @@ void main() {
   color = gradient(heat);
 
   fragColor = vec4(color, 1.);
+//  fragColor = vec4(vec3(innerMask), 1.);
 }
 `;
