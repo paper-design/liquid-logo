@@ -47,6 +47,23 @@ float snoise(vec2 v) {
     return 130. * dot(m, g);
 }
 
+vec2 get_img_uv() {
+    vec2 img_uv = vUv;
+    img_uv -= .5;
+    if (u_ratio > u_img_ratio) {
+        img_uv.x = img_uv.x * u_ratio / u_img_ratio;
+    } else {
+        img_uv.y = img_uv.y * u_img_ratio / u_ratio;
+    }
+    float scale_factor = 1.;
+    img_uv *= scale_factor;
+    img_uv += .5;
+
+    img_uv.y = 1. - img_uv.y;
+
+    return img_uv;
+}
+
 vec2 rotate(vec2 uv, float th) {
     return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
 }
