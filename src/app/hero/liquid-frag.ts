@@ -93,13 +93,37 @@ vec3 gradient(float t) {
   return mix(colors[i], colors[j], smoothstep(0., 1., f));
 }
 
+float getMask(float cycle, float y) {
+//  float maskGrowTime = clamp((cycle - 0.6) / (0.8 - 0.6), 0.0, 1.0);
+  float maskFadeTime = 1.0 - clamp((cycle - 0.9) / (1.0 - 0.9), 0.0, 1.0);
+  float maskGrowTime = clamp(3. * cycle, 0.0, 1.0);
+//  float maskFadeTime = clamp((cycle - 0.3) / 0.7, 0.0, 1.0);
+
+  
+  float maskPos = y;
+  float posY = .9 * cycle - .1;
+
+  float mask = 0.;
+  float movingDown = (smoothstep(posY, posY + .2, y) * smoothstep(posY + .6, posY + .2, y));
+  movingDown *= maskFadeTime;
+  mask += movingDown;
+
+  float growing = maskGrowTime * (smoothstep(-.1, -.1, y) * smoothstep(.5, -.1, y));
+  mask += growing;
+  
+  
+  mask = clamp(mask, 0., 1.);
+  return mask;
+}
+
 void main() {
   vec2 uv = vUv;
   uv.y = 1. - uv.y;
   uv.x *= u_ratio;
   
   float t = .001 * u_time;
-
+//  t = u_refraction;
+  
   vec2 imgUV = getImgUV();
   float imgSoftFrame = getImgFrame(imgUV, .3);
   vec4 img = texture(u_image_texture, imgUV);
@@ -108,32 +132,30 @@ void main() {
   vec3 color = vec3(0.);
 
   float radialMask = 1. - smoothstep(.0, .4, length(uv - .5 - vec2(0., .1)));
+
+  float cycle = mod(t, 1.);
+  float innerMask = getMask(cycle, uv.y);
+
+  float innerBlur = pow(img.r, 5.);
+  innerBlur += img.b;
+  innerBlur += .5 * (radialMask - .5);
   
   float outerBlur = img.g;
+  cycle = mod(t + .2, 1.);
+  float outerMask = getMask(cycle, uv.y);
+
+  outerBlur = pow(outerBlur, 1.2);
+  float outer = outerBlur * (.5 + .5 * outerMask);
   
-  float outerDirection = uv.y - t;
-  outerDirection = mod(outerDirection, 1.);
-  
-  float outer = (smoothstep(.0, .5, outerDirection) * smoothstep(1., .5, outerDirection));
-  outer *= outerBlur;
+  float inner = innerBlur;
+  inner -= .5 * innerMask;
+  inner = clamp(inner, 0., 1.);
 
-  float innerBlur = pow(img.r, 3.);
-  innerBlur += img.b * (.7 + .3 * radialMask);
-  innerBlur = clamp(innerBlur, 0., 1.);
-
-
-  float innerDirection = uv.y - t - .2;
-  innerDirection = mod(innerDirection, 1.);
-  
-  float inner = (smoothstep(.1, .5, innerDirection) * smoothstep(.9, .5, innerDirection));
-  inner *= innerBlur;
-
-  float heat = max(inner, outer);
+  float heat = inner + outer;
   heat = clamp(heat, 0., 1.);
   
   color = gradient(heat);
 
   fragColor = vec4(color, 1.);
-//  fragColor = vec4(vec3(innerBlur), 1.);
 }
 `;

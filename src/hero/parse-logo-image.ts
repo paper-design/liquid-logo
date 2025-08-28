@@ -50,7 +50,6 @@ export function parseLogoImage(file: File | string): Promise<{ imageData: ImageD
       canvas.height = height;
 
       const ratio = width / height;
-      const blurSize = 80;
       const blurPadding = 80;
 
       // Draw the user image on an offscreen canvas.
@@ -70,14 +69,14 @@ export function parseLogoImage(file: File | string): Promise<{ imageData: ImageD
       const data = shapeImageData.data;
 
       shapeCtx.fillRect(0, 0, width, height);
-      shapeCtx.filter = 'blur(' + blurSize + 'px)';
+      shapeCtx.filter = 'blur(80px)';
       shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
-      shapeCtx.filter = 'blur(' + (.3 * blurSize) + 'px)';
+      shapeCtx.filter = 'blur(18px)';
       shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
       const outerBlurData = shapeCtx.getImageData(0, 0, width, height).data;
 
       shapeCtx.fillRect(0, 0, width, height);
-      shapeCtx.filter = 'blur(' + 50 + 'px)';
+      shapeCtx.filter = 'blur(30px)';
       shapeCtx.drawImage(img, blurPadding, blurPadding / ratio, width - 2 * blurPadding, height - 2 * blurPadding / ratio);
       const innerBlurData = shapeCtx.getImageData(0, 0, width, height).data;
 

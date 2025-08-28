@@ -10,9 +10,9 @@ export type ShaderParams = {
 export const params = {
   refraction: {
     min: 0,
-    max: 0.06,
+    max: 1,
     step: 0.001,
-    default: 0.015,
+    default: 0,
   },
   edge: {
     min: 0,
