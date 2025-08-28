@@ -2,7 +2,7 @@
 
 /** Cleans up the input image by turning it into a black and white mask with a beveled edge */
 
-export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngBlob: Blob }> {
+export function parseLogoImage(file: File | string): Promise<{ imageData: ImageData; pngBlob: Blob }> {
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
 
@@ -18,7 +18,7 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
     const img = new Image();
     img.onload = function () {
       // Force SVG to load at a high fidelity size if it's an SVG
-      if (file.type === 'image/svg+xml') {
+      if (typeof file === 'string' ? file.endsWith('.svg') : file.type === 'image/svg+xml') {
         img.width = 1000; // or whatever base size you prefer
         img.height = 1000;
       }
@@ -193,6 +193,6 @@ export function parseLogoImage(file: File): Promise<{ imageData: ImageData; pngB
     };
 
     img.onerror = () => reject(new Error('Failed to load image'));
-    img.src = URL.createObjectURL(file);
+    img.src = typeof file === 'string' ? file : URL.createObjectURL(file);
   });
 }

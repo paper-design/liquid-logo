@@ -1,5 +1,6 @@
 import { PaperLogo } from '@/app/paper-logo';
 import { Hero } from '@/hero/hero';
+import { logos } from '@/hero/logos';
 import NextLink from 'next/link';
 import { Fragment, Suspense } from 'react';
 
@@ -53,55 +54,3 @@ export default async function Page({ params }: PageProps) {
     </div>
   );
 }
-
-const logos = [
-  [
-    {
-      name: 'Apple',
-      href: '/',
-      src: '/logos/apple.svg',
-    },
-    {
-      name: 'Nike',
-      href: '/share/01JMFN4FHEYQY3CBR7B4YBZFK9?edge=0.01',
-      src: '/logos/nike.svg',
-    },
-    {
-      name: 'NASA',
-      href: '/share/01JMFN7R2E6WV297MM6EHBCAW6?edge=0.15',
-      src: '/logos/nasa.svg',
-    },
-    {
-      name: 'Chanel',
-      href: '/share/01JMFNF83EX5DAVWF1TP1469BW?edge=0.15',
-      src: '/logos/chanel.svg',
-    },
-    {
-      name: 'Volkswagen',
-      href: '/share/01JMFPD47QAN0FXMWWQC8YG8SY?edge=0.01',
-      src: '/logos/volkswagen.svg',
-    },
-  ],
-  [
-    {
-      name: 'Vercel',
-      href: '/share/01JMFQ1ESB52205RRGSHCXHCZG?edgeBlur=0.01',
-      src: '/logos/vercel.svg',
-    },
-    {
-      name: 'Discord',
-      href: '/share/01JMFQS93Q6R2VRQ62HTAA2AKG',
-      src: '/logos/discord.svg',
-    },
-    // {
-    //   name: 'Remix',
-    //   href: '/share/01JMFQ533G3TVC21E96RSAG4KF',
-    //   src: '/logos/remix.svg',
-    // },
-    {
-      name: 'Paper',
-      href: '/share/01JMP2MVEWNE5CZYXW94JQME35',
-      src: '/logos/paper.svg',
-    },
-  ],
-];
