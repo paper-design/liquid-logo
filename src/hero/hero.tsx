@@ -228,7 +228,7 @@ export function Hero({ imageId }: HeroProps) {
           })(),
         }}
       >
-        <div className="aspect-square w-400">
+        <div className="aspect-square h-full">
           {imageData && <Canvas imageData={imageData} params={state} processing={processing} />}
         </div>
       </div>
